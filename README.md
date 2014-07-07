@@ -1,7 +1,7 @@
 angular-radar
 ========
 
-A light weight tool to create gauge chart with AngularJs
+A light weight tool to create gauge chart with AngularJS
 ##![angular-radar Charts](https://raw.githubusercontent.com/vthinkxie/angular-radar/master/example/Angular%20Radar.png "angular-radar Charts")
 
 ## Basic Quick Start 
