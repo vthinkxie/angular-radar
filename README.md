@@ -23,10 +23,10 @@ Include the downloaded dependencies in the ```<head>``` section of the html.
 <script src="angular-radar/src/angular-radar.js"></script>
 ```
 
-### 2. Add ng-gauge to the app.js
+### 2. Add angular-radar to the app.js
 for example
 ```html
-angular.module('ng-gauge-example', [
+angular.module('RadarApp', [
   'angular-radar'
 ])
 ```
