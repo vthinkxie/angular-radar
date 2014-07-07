@@ -1,0 +1,15 @@
+{
+  "name": "alangrafu/radar-chart-d3",
+  "version": "1.0.0",
+  "main": null,
+  "description": "Radar chart based on D3",
+  "license": "Apache",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
