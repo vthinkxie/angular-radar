@@ -7,9 +7,9 @@ the orignal d3-radar chart is from https://github.com/alangrafu/radar-chart-d3
 
 
 ### Modified
-+Angular Support
-+More options
-+Improve positioning,radar chart auto adjust and always in the middle of its parrent div
++Angular Support  
++More options  
++Improve positioning,radar chart auto adjust and always in the middle of its parrent div  
 
 ##![angular-radar Charts](https://raw.githubusercontent.com/vthinkxie/angular-radar/master/example/Angular%20Radar.png "angular-radar Charts")
 
