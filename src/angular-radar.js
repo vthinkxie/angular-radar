@@ -3,12 +3,19 @@
         return {
             restrict: 'E', 
             scope: { 
-                max:'=',
+                maxValue:'=',
                 val: '=',
                 width:'=',
                 height:'=',
                 levels: '=',
-                colorFunction: '='
+                rotate: '=',
+                chartScale: '=',
+                legendScale: '=',
+                colorFunction: '=',
+                radians:'=',
+                opacityArea:'=',
+                fontSize:'=',
+                tips:'@'
             },
             link: function (scope, element, attrs) {
                 var colorFunction = function(i) {
@@ -18,14 +25,16 @@
                 var config = {
                      width:scope.width||element[0].parentElement.offsetWidth,
                      height:scope.height||element[0].parentElement.offsetHeight,
-                     factor: .7,
-                     factorLegend: .85,
-                     levels: 3,
-                     maxValue: scope.max || 0,
-                     radians: 2 * Math.PI,
-                     opacityArea: 0.6,
+                     chartScale: scope.chartScale || 0.7,
+                     legendScale: scope.legendScale||0.85,
+                     levels: scope.levels||3,
+                     maxValue: scope.maxValue || 0,
+                     radians: scope.radians||2 * Math.PI,
+                     rotate: scope.rotate*Math.PI||0 * Math.PI,
+                     opacityArea: scope.opacityArea||0.6,
                      color: scope.colorFunction || colorFunction,
-                     fontSize: 14
+                     fontSize: scope.fontSize||14,
+                     tips: scope.tips||"Less than 3 elements"
                 };                  
 
                 scope.render = function(data){
@@ -35,16 +44,16 @@
                     config.maxValue = Math.max(config.maxValue, d3.max(data, function(i){return d3.max(i.map(function(o){return o.value;}))}));
                     var allAxis = (data[0].map(function(i){return i.axis}));
                     var total = allAxis.length;
-                    var radius = config.factor*config.size/2;
-                    function getPosition(i, range, factor, func){
-                        factor = factor || 1;
-                        return range * (1 - factor * func(i * config.radians / total));
+                    var radius = config.chartScale*config.size/2;
+                    function getPosition(i, range, chartScale, func){
+                        chartScale = chartScale || 1;
+                        return range * (1 - chartScale * func(i * config.radians / total+config.rotate));
                     }
-                    function getHorizontalPosition(i, range, factor){               
-                        return getPosition(i, range, factor, Math.sin);
+                    function getHorizontalPosition(i, range, chartScale){               
+                        return getPosition(i, range, chartScale, Math.sin);
                     }
-                    function getVerticalPosition(i, range, factor){                     
-                        return getPosition(i, range, factor, Math.cos);
+                    function getVerticalPosition(i, range, chartScale){                     
+                        return getPosition(i, range, chartScale, Math.cos);
                     }                        
 
                     d3.select(element[0]).select("svg").remove();
@@ -55,7 +64,6 @@
                          /*Draw Outer Line*/
                         for(var j=0; j<config.levels; j++){
                           var levelFactor = radius*((j+1)/config.levels);
-                          // console.log(levelFactor);
                           var drawBasic = gRadar.selectAll(".levels").data(allAxis).enter().append("svg:line")
                              .attr("x1", function(d, i){return getHorizontalPosition(i, levelFactor);})
                              .attr("y1", function(d, i){return getVerticalPosition(i, levelFactor);})
@@ -79,21 +87,21 @@
                               var p = getVerticalPosition(i, config.size / 2);
                               return p < config.fontSize ? "translate(0, " + (config.fontSize - p) + ")" : "";
                             })
-                            .attr("x", function(d, i){return getHorizontalPosition(i, config.size / 2, config.factorLegend);}).attr("transform", "translate(" + (-config.widthShift) + ", " + (-config.heightShift) + ")")
-                            .attr("y", function(d, i){return getVerticalPosition(i, config.size / 2, config.factorLegend);}).attr("transform", "translate(" + (-config.widthShift) + ", " + (-config.heightShift) + ")");
+                            .attr("x", function(d, i){return getHorizontalPosition(i, config.size / 2, config.legendScale);}).attr("transform", "translate(" + (-config.widthShift) + ", " + (-config.heightShift) + ")")
+                            .attr("y", function(d, i){return getVerticalPosition(i, config.size / 2, config.legendScale);}).attr("transform", "translate(" + (-config.widthShift) + ", " + (-config.heightShift) + ")");
 
                         /*Draw Area*/
                         var series = 0;    
-                        data.forEach(function(y, x){
+                        data.forEach(function(element, index){
                           var dataValues = [];
-                          gRadar.selectAll(".nodes")
-                            .data(y, function(j, i){
+                          element.forEach(function(element, index){
                               dataValues.push([
-                                getHorizontalPosition(i, config.size/2, (parseFloat(Math.max(j.value, 0))/config.maxValue)*config.factor),
-                                getVerticalPosition(i, config.size/2, (parseFloat(Math.max(j.value, 0))/config.maxValue)*config.factor)
+                                getHorizontalPosition(index, config.size/2, (parseFloat(Math.max(element.value, 0))/config.maxValue)*config.chartScale),
+                                getVerticalPosition(index, config.size/2, (parseFloat(Math.max(element.value, 0))/config.maxValue)*config.chartScale)
                               ]);
                             });
-                          dataValues.push(dataValues[0]);
+                          // dataValues.push(dataValues[0]);
+                          // console.log(dataValues);
                           gRadar.selectAll(".area")
                              .data([dataValues])
                              .enter()
@@ -121,10 +129,13 @@
                         });                              
                     }    
                     else{
-                        gRadar.append("text").attr("class", "legend").text("Less than 3 elements").attr("transform", "translate(" + (config.size/2) + ", " + (config.size/2) + ")").style('text-anchor', 'middle');
+                        gRadar.append("text").attr("class", "legend").text(config.tips)
+                        .style("font-family", "Verdana").style("font-size", config.fontSize + "px")
+                        .style("text-anchor", "middle")
+                        .attr("transform", "translate(" + (config.size/2-config.widthShift) + ", " + (config.size/2-config.heightShift) + ")");
                     }   
                 }
-
+                
                 scope.$watch('val', function(){
                   scope.render(scope.val);
                 }, true);   

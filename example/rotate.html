@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html  ng-app="RadarApp">
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Angular Radar</title>
+  <style type="text/css">
+	body{
+		background-color: #555;
+	}
+	#chart{
+		height: 400px;
+		width: 600px;
+		background-color: #fff;
+	}	
+  </style>
+  <script src="../thrid-party/d3.v3.min.js"></script>
+  <script src="../thrid-party/angular.min.js"></script>   
+  <script src="../src/angular-radar.js"></script>
+  <script src="app.js"></script>   
+</head>
+<body ng-controller="radarCtrl">
+<div id="chart" style='float:left'>
+<radar-chart val="data" rotate="1/6"></radar-chart>	
+</div>
+
+<script>
+// RadarChart.draw("#chart", d);
+</script>
+</body>
+</html>
