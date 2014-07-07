@@ -44,6 +44,8 @@ angular.module('RadarApp', [
 ```html
 <radar-chart val="data"></radar-chart>
 ```
+
+### 4. Options
 Here are the options that can be config
 ```html
             scope: { 
